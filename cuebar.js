@@ -1,17 +1,17 @@
 CueBar = {
 
     mark: (position, duration) => {
-        let factorialEquivalent = 704 / duration;
-        let cuePosition = factorialEquivalent * position + 18.0;
+        var factorialEquivalent = 704 / duration;
+        var cuePosition = factorialEquivalent * position + 18.0;
         $('div#bar_marker').css({left: cuePosition});
         return cuePosition;
     },
 
     build: (cues, duration) => {
-        let base = duration / 704;
-        let positionSpot = (cues[key].time / base) - 6;
+        var base = duration / 704;
+        var positionSpot = (cues[key].time / base) - 6;
 
-        for (var key in cues) {
+        for (let key in cues) {
             if (cues[key].metadata) {
                 let the_kind = cueBar.type(cues[key].metadata);
                 $('#icon_bar').append(`<img onclick='milyoni.seek(${cues[key].time});' id='icon_${key}' class='icon_bar ${the_kind}' src='/images/${the_kind}_icon.png' >`);
@@ -77,7 +77,7 @@ CueBar = {
     },
 
     type: (metadata) => {
-        let kind;
+        var kind;
 
         if (metadata.match(/facebook\.com/)) {
             kind = 'like';
