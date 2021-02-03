@@ -1,4 +1,6 @@
-CueBar = {
+"use strict";
+
+var CueBar = {
 
     mark: (position, duration) => {
         var factorialEquivalent = 704 / duration;
