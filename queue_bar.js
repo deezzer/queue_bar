@@ -1,7 +1,8 @@
 "use strict";
 
-var CueBar = {
-   var screenSize = 704;
+var QueueBar = {
+    
+    var screenSize = 704;
 
     markAt: (position, duration) => {
         var screenPaddingOffset = 18.0;
@@ -10,15 +11,15 @@ var CueBar = {
         $('div#bar_marker').css({left: mark});
     },
 
-    placeInteractiveIconsOnInteractiveBar: (cues, duration) => {
+    placeInteractiveIconsOnInteractiveBar: (queues, duration) => {
         var base = duration / screenSize;
         var screenOffset = 6;
-        var positionSpot = (cues[key].time / base) - screenOffset;
-       
-        for (let key in cues) {
-            if (cues[key].metadata) {
-                let the_kind = cueBar.type(cues[key].metadata);
-                $('#icon_bar').append(`<img onclick='milyoni.seek(${cues[key].time});' 
+        var positionSpot = (queues[key].time / base) - screenOffset;
+
+        for (let key in queues) {
+            if (queues[key].metadata) {
+                let the_kind = queueBar.type(queues[key].metadata);
+                $('#icon_bar').append(`<img onclick='milyoni.seek(${queues[key].time});' 
                                         id='icon_${key}' 
                                         class='icon_bar ${the_kind}' 
                                         src='/images/${the_kind}_icon.png' >`);
@@ -29,14 +30,27 @@ var CueBar = {
     },
 
     requestAppropriateModalType: (event) => {
-        $.post(`/api/cues/callback?meta=${event.cuePoint.metadata}&movie_id=${window.movie.id}&name=${event.cuePoint.name}`)
+        $.post(`/api/queues/callback?meta=${event.queuePoint.metadata}&movie_id=${window.movie.id}&name=${event.queuePoint.name}`)
             .done(response => {
-                cueBar.popupModal(response)
+                queueBar.popupModal(response)
             })
     },
 
-    stop: function () {
-        $('div#bar_marker').stop();
+    // On the remote platform, a custom markup was inserted into each movie record as a property. 
+    // Upon making an API call to the platform, the response would allow this type() function to match and decide which kind of interactive modal to display.
+    type: (metadata) => {
+        var kind;
+
+        if (metadata.match(/facebook\.com/)) {
+            kind = 'like';
+        } else if (metadata.match(/\[/)) {
+            kind = 'clip';
+        } else if (metadata.match(/\~/)) {
+            kind = 'commentary';
+        } else {
+            kind = 'quote';
+        }
+        return kind;
     },
 
     popupModal: (object) => {
@@ -78,24 +92,13 @@ var CueBar = {
    <img src="/images/share.png" width="60" height="18" class="shareButton" onclick="fbCallQuote()"/>`)
                 .fadeIn().delay(20000).fadeOut();
         } else {
-             milyoni.clip = object;
+            milyoni.clip = object;
             $('div#clipFrame').html(`<img src="${milyoni.clip.thumbnail_url}" width="158" height="85" class="clipImage" /> <img src="/images/share.png" width="60" height="18" class="shareButton" onclick="fbCallClip();" />`).fadeIn().delay(20000).fadeOut();
         }
     },
-
-    type: (metadata) => {
-        var kind;
-
-        if (metadata.match(/facebook\.com/)) {
-            kind = 'like';
-        } else if (metadata.match(/\[/)) {
-            kind = 'clip';
-        } else if (metadata.match(/\~/)) {
-            kind = 'commentary';
-        } else {
-            kind = 'quote';
-        }
-        return kind;
+    
+    stop: function () {
+        $('div#bar_marker').stop();
     }
 
 };
