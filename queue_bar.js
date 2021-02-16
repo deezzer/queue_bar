@@ -1,13 +1,13 @@
 "use strict";
 
 var QueueBar = {
-    
+
     var screenSize = 704;
 
     markAt: (position, duration) => {
         var screenPaddingOffset = 18.0;
-        var factorialEquivalent =  screenSize/duration;
-        var mark = factorialEquivalent * position + screenPaddingOffset;
+        var relativeScreenWidthToMovieLength =  screenSize / duration;
+        var mark = relativeScreenWidthToMovieLength * position + screenPaddingOffset;
         $('div#bar_marker').css({left: mark});
     },
 
@@ -96,7 +96,7 @@ var QueueBar = {
             $('div#clipFrame').html(`<img src="${milyoni.clip.thumbnail_url}" width="158" height="85" class="clipImage" /> <img src="/images/share.png" width="60" height="18" class="shareButton" onclick="fbCallClip();" />`).fadeIn().delay(20000).fadeOut();
         }
     },
-    
+
     stop: function () {
         $('div#bar_marker').stop();
     }
