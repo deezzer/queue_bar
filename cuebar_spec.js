@@ -1,6 +1,6 @@
 describe("Cue Bar Specs", () => {
 
-    describe("markAt - The Cue's Marker", () => {
+    describe("markAt() - The Cue's Marker", () => {
         it("offsets the position of the marker greater than the actual position because of the Cue bar's position ", () => {
             expect(CueBar.markAt(105, 7055)).toBeCloseTo('28.48');
             expect(CueBar.markAt(20, 7055)).toBeCloseTo('20');
