@@ -1,32 +1,37 @@
 "use strict";
 
 var CueBar = {
+   var screenSize = 704;
 
-    mark: (position, duration) => {
-        var factorialEquivalent = 704 / duration;
-        var cuePosition = factorialEquivalent * position + 18.0;
-        $('div#bar_marker').css({left: cuePosition});
-        return cuePosition;
+    markAt: (position, duration) => {
+        var screenPaddingOffset = 18.0;
+        var factorialEquivalent =  screenSize/duration;
+        var mark = factorialEquivalent * position + screenPaddingOffset;
+        $('div#bar_marker').css({left: mark});
     },
 
-    build: (cues, duration) => {
-        var base = duration / 704;
-        var positionSpot = (cues[key].time / base) - 6;
-
+    placeInteractiveIconsOnInteractiveBar: (cues, duration) => {
+        var base = duration / screenSize;
+        var screenOffset = 6;
+        var positionSpot = (cues[key].time / base) - screenOffset;
+       
         for (let key in cues) {
             if (cues[key].metadata) {
                 let the_kind = cueBar.type(cues[key].metadata);
-                $('#icon_bar').append(`<img onclick='milyoni.seek(${cues[key].time});' id='icon_${key}' class='icon_bar ${the_kind}' src='/images/${the_kind}_icon.png' >`);
+                $('#icon_bar').append(`<img onclick='milyoni.seek(${cues[key].time});' 
+                                        id='icon_${key}' 
+                                        class='icon_bar ${the_kind}' 
+                                        src='/images/${the_kind}_icon.png' >`);
                 $('#icon_' + key).css("left", positionSpot);
             }
         }
         $('#icon_bar').fadeIn();
     },
 
-    load: (event) => {
+    requestAppropriateModalType: (event) => {
         $.post(`/api/cues/callback?meta=${event.cuePoint.metadata}&movie_id=${window.movie.id}&name=${event.cuePoint.name}`)
             .done(response => {
-                cueBar.popupScreen(response)
+                cueBar.popupModal(response)
             })
     },
 
@@ -34,7 +39,7 @@ var CueBar = {
         $('div#bar_marker').stop();
     },
 
-    popupScreen: (object) => {
+    popupModal: (object) => {
         if (object.link) {
             $('div#likeFrame').html(`<b>${object.name}</b><br/><img src="${object.picture_url}"> <iframe src="https://www.facebook.com/plugins/like.php?href=${object.link}&amp;send=false&amp;layout=standard&amp;show_faces=false&amp;action=like&amp;colorscheme=light&amp;font&amp;height=45" scrolling="no" frameborder="0" style="border:none; overflow:hidden; height:35px;" allowTransparency="true"></iframe>`).fadeIn().delay(20000).fadeOut();
         } else if (object.thumbnail_url == undefined) {
