@@ -36,7 +36,7 @@ var QueueBar = {
             })
     },
 
-    // On the remote platform, a custom markup was inserted into each movie record as a property. 
+    // On the remote platform, a custom markup was inserted into each movie record. 
     // Upon making an API call to the platform, the response would allow this type() function to match and decide which kind of interactive modal to display.
     type: (metadata) => {
         var kind;
