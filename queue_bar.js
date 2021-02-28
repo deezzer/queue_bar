@@ -11,12 +11,12 @@ var QueueBar = {
         $('div#bar_marker').css({left: mark});
     },
 
-    placeInteractiveIconsOnInteractiveBar: (queues, duration) => {
+    placeInteractiveIconsOnInteractiveBar: async (queues, duration) => {
         var base = duration / screenSize;
         var screenOffset = 6;
         var positionSpot = (queues[key].time / base) - screenOffset;
 
-        for (let key in queues) {
+        for await (key of queues) {
             if (queues[key].metadata) {
                 let the_kind = queueBar.type(queues[key].metadata);
                 $('#icon_bar').append(`<img onclick='milyoni.seek(${queues[key].time});' 
@@ -26,14 +26,16 @@ var QueueBar = {
                 $('#icon_' + key).css("left", positionSpot);
             }
         }
-        $('#icon_bar').fadeIn();
+        await $('#icon_bar').fadeIn();
     },
 
-    requestAppropriateModalType: (event) => {
-        $.post(`/api/queues/callback?meta=${event.queuePoint.metadata}&movie_id=${window.movie.id}&name=${event.queuePoint.name}`)
-            .done(response => {
-                queueBar.popupModal(response)
-            })
+    requestAppropriateModalType: async (event) => {
+       try {
+         var response = await fetch(`/api/queues/callback?meta=${event.queuePoint.metadata}&movie_id=${window.movie.id}&name=${event.queuePoint.name}`)
+         await queueBar.popupModal(response); } 
+       catch (err) {
+         console.warn(err)
+      }
     },
 
     // On the remote platform, a custom markup was inserted into each movie record. 
@@ -58,18 +60,16 @@ var QueueBar = {
             $('div#likeFrame').html(`<b>${object.name}</b><br/><img src="${object.picture_url}"> <iframe src="https://www.facebook.com/plugins/like.php?href=${object.link}&amp;send=false&amp;layout=standard&amp;show_faces=false&amp;action=like&amp;colorscheme=light&amp;font&amp;height=45" scrolling="no" frameborder="0" style="border:none; overflow:hidden; height:35px;" allowTransparency="true"></iframe>`).fadeIn().delay(20000).fadeOut();
         } else if (object.thumbnail_url == undefined) {
             milyoni.quote = object;
-
             $('div#quoteFrame').html(`"${milyoni.quote.text}" <img src="/images/share.png" width="60" height="18" class="shareButton" onclick="fbCallQuote();"/>`).fadeIn().delay(20000).fadeOut();
         } else if (object.is_commentary) {
             let view_url = "http://c.brightcove.com/services/viewer/federated_f9?isVid=1&isUI=1&publisherID=11111&playerID=11111&domain=embed&videoId=" + milyoni.clip.video_id;
-
             milyoni.clip = object;
 
             $('div#quoteFrame').html(`
   <object id="flashObj" width="250" height="200" classid="clsid:11111" codebase="http://download.me">
     <param name="movie" value="http://c.brightcove.com/services/viewer/federated_f9?isVid=1" />
     <param name="bgcolor" value="#FFFFFF" />
-    <param name="flashVars" value="playerID=11111&playerKey=AQ~~,AAAA2jbW_lE~,iqhqlbZiY1VRCEo2F_EWDg-BrvXB3QPv&domain=embed&dynamicStreaming=true" />
+    <param name="flashVars" value="playerID=11111&playerKey=0000&domain=embed&dynamicStreaming=true" />
     <param name="base" value="http://admin.brightcove.com" />
     <param name="seamlesstabbing" value="false" />
     <param name="allowFullScreen" value="true" />
@@ -85,7 +85,7 @@ var QueueBar = {
         allowFullScreen="true" 
         swLiveConnect="true" 
         allowScriptAccess="always" 
-        pluginspage="http://www.macromedia.com/shockwave/download/index.cgi">
+        pluginspage="http://www.macromedia.com/shockwave/oldschool-i-know/download/index.cgi">
     </embed>
   </object>
    <br> 
