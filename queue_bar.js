@@ -2,18 +2,19 @@
 
 var QueueBar = {
 
-    var screenSize = 704;
+    const screenSize = 704;
 
     markAt: (position, duration) => {
-        var screenPaddingOffset = 18.0;
+        const screenPaddingOffset = 18.0;
         var relativeScreenWidthToMovieLength =  screenSize / duration;
         var mark = relativeScreenWidthToMovieLength * position + screenPaddingOffset;
         $('div#bar_marker').css({left: mark});
     },
 
     placeInteractiveIconsOnInteractiveBar: async (queues, duration) => {
+        const screenOffset = 6;
+
         var base = duration / screenSize;
-        var screenOffset = 6;
         var positionSpot = (queues[key].time / base) - screenOffset;
 
         for await (key of queues) {
