@@ -6,16 +6,16 @@ var QueueBar = {
 
     markAt: (position, duration) => {
         const screenPaddingOffset = 18.0;
-        var relativeScreenWidthToMovieLength =  screenSize / duration;
-        var mark = relativeScreenWidthToMovieLength * position + screenPaddingOffset;
+        const relativeScreenWidthToMovieLength =  screenSize / duration;
+        const mark = relativeScreenWidthToMovieLength * position + screenPaddingOffset;
         $('div#bar_marker').css({left: mark});
     },
 
     placeInteractiveIconsOnInteractiveBar: async (queues, duration) => {
         const screenOffset = 6;
 
-        var base = duration / screenSize;
-        var positionSpot = (queues[key].time / base) - screenOffset;
+        const base = duration / screenSize;
+        const positionSpot = (queues[key].time / base) - screenOffset;
 
         for await (key of queues) {
             if (queues[key].metadata) {
@@ -32,7 +32,7 @@ var QueueBar = {
 
     requestAppropriateModalType: async (event) => {
        try {
-         var response = await fetch(`/api/queues/callback?meta=${event.queuePoint.metadata}&movie_id=${window.movie.id}&name=${event.queuePoint.name}`)
+         const response = await fetch(`/api/queues/callback?meta=${event.queuePoint.metadata}&movie_id=${window.movie.id}&name=${event.queuePoint.name}`)
          await queueBar.popupModal(response); } 
        catch (err) {
          console.warn(err)
