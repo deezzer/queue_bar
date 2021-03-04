@@ -1,8 +1,8 @@
 "use strict";
 
-var QueueBar = {
+const screenSize = 704;
 
-    const screenSize = 704;
+var QueueBar = {
 
     markAt: (position, duration) => {
         const screenPaddingOffset = 18.0;
@@ -13,7 +13,6 @@ var QueueBar = {
 
     placeInteractiveIconsOnInteractiveBar: async (queues, duration) => {
         const screenOffset = 6;
-
         const base = duration / screenSize;
         const positionSpot = (queues[key].time / base) - screenOffset;
 
@@ -30,20 +29,20 @@ var QueueBar = {
         await $('#icon_bar').fadeIn();
     },
 
-    requestAppropriateModalType: async (event) => {
-       try {
-         const response = await fetch(`/api/queues/callback?meta=${event.queuePoint.metadata}&movie_id=${window.movie.id}&name=${event.queuePoint.name}`)
-         await queueBar.popupModal(response); } 
-       catch (err) {
-         console.warn(err)
-      }
+    requestModalType: (event) => {
+        const url = `/api/queues/callback?meta=${event.queuePoint.metadata}&movie_id=${window.movie.id}&name=${event.queuePoint.name}`;
+        fetch(url)
+            .then(response => {
+                queueBar.popupModal(response)})
+            .catch(error => {
+                console.warn(err)
+            });
     },
 
     // On the remote platform, a custom markup was inserted into each movie record. 
     // Upon making an API call to the platform, the response would allow this type() function to match and decide which kind of interactive modal to display.
     type: (metadata) => {
         var kind;
-
         if (metadata.match(/facebook\.com/)) {
             kind = 'like';
         } else if (metadata.match(/\[/)) {
