@@ -1,17 +1,19 @@
 "use strict";
 
+import {View} from './view.js';
+
 const screenSize = 704;
 
-var QueueBar = {
+QueueBar = {
 
     markAt: (position, duration) => {
         const screenPaddingOffset = 18.0;
-        const relativeScreenWidthToMovieLength =  screenSize / duration;
+        const relativeScreenWidthToMovieLength = screenSize / duration;
         const mark = relativeScreenWidthToMovieLength * position + screenPaddingOffset;
         $('div#bar_marker').css({left: mark});
     },
 
-    placeInteractiveIconsOnInteractiveBar: async (queues, duration) => {
+    placeInteractiveIconsOnBar: async (queues, duration) => {
         const screenOffset = 6;
         const base = duration / screenSize;
         const positionSpot = (queues[key].time / base) - screenOffset;
@@ -19,10 +21,7 @@ var QueueBar = {
         for await (key of queues) {
             if (queues[key].metadata) {
                 let the_kind = queueBar.type(queues[key].metadata);
-                $('#icon_bar').append(`<img onclick='milyoni.seek(${queues[key].time});' 
-                                        id='icon_${key}' 
-                                        class='icon_bar ${the_kind}' 
-                                        src='/images/${the_kind}_icon.png' >`);
+                $('#icon_bar').append(View.icon(key, kind, queues[key].time));
                 $('#icon_' + key).css("left", positionSpot);
             }
         }
@@ -33,14 +32,15 @@ var QueueBar = {
         const url = `/api/queues/callback?meta=${event.queuePoint.metadata}&movie_id=${window.movie.id}&name=${event.queuePoint.name}`;
         fetch(url)
             .then(response => {
-                queueBar.popupModal(response)})
+                queueBar.popupModal(response)
+            })
             .catch(error => {
                 console.warn(err)
             });
     },
 
-    // On the remote platform, a custom markup was inserted into each movie record. 
-    // Upon making an API call to the platform, the response would allow this type() function to match and decide which kind of interactive modal to display.
+    // On the Service's API platform,  custom markup was inserted into each movie record.
+    // The response would allow the type() function to match and decide which kind of interactive modal to display.
     type: (metadata) => {
         var kind;
         if (metadata.match(/facebook\.com/)) {
@@ -57,43 +57,17 @@ var QueueBar = {
 
     popupModal: (object) => {
         if (object.link) {
-            $('div#likeFrame').html(`<b>${object.name}</b><br/><img src="${object.picture_url}"> <iframe src="https://www.facebook.com/plugins/like.php?href=${object.link}&amp;send=false&amp;layout=standard&amp;show_faces=false&amp;action=like&amp;colorscheme=light&amp;font&amp;height=45" scrolling="no" frameborder="0" style="border:none; overflow:hidden; height:35px;" allowTransparency="true"></iframe>`).fadeIn().delay(20000).fadeOut();
+            $('div#likeFrame').html(View.liker(object.picture_url, object.link))
         } else if (object.thumbnail_url == undefined) {
             milyoni.quote = object;
-            $('div#quoteFrame').html(`"${milyoni.quote.text}" <img src="/images/share.png" width="60" height="18" class="shareButton" onclick="fbCallQuote();"/>`).fadeIn().delay(20000).fadeOut();
+            $('div#quoteFrame').html(View.aQuote(milyoni.quote.text))
         } else if (object.is_commentary) {
-            let view_url = "http://c.brightcove.com/services/viewer/federated_f9?isVid=1&isUI=1&publisherID=11111&playerID=11111&domain=embed&videoId=" + milyoni.clip.video_id;
+            let urlForView = "http://c.brightcove.com/services/viewer/federated_f9?isVid=1&isUI=1&publisherID=11111&playerID=11111&domain=embed&videoId=" + milyoni.clip.video_id;
             milyoni.clip = object;
-
-            $('div#quoteFrame').html(`
-  <object id="flashObj" width="250" height="200" classid="clsid:11111" codebase="http://download.me">
-    <param name="movie" value="http://c.brightcove.com/services/viewer/federated_f9?isVid=1" />
-    <param name="bgcolor" value="#FFFFFF" />
-    <param name="flashVars" value="playerID=11111&playerKey=0000&domain=embed&dynamicStreaming=true" />
-    <param name="base" value="http://admin.brightcove.com" />
-    <param name="seamlesstabbing" value="false" />
-    <param name="allowFullScreen" value="true" />
-    <param name="swLiveConnect" value="true" />
-    <param name="allowScriptAccess" value="always" /> 
-    <embed src="${view_url}"
-        bgcolor="#FFFFFF" 
-        flashVars="playerID=11111&playerKey=AQ~~,11111~,11111-11111&domain=embed&dynamicStreaming=true" 
-        base="http://admin.brightcove.com" 
-        name="flashObj" width="250" h
-        eight="200" seamlesstabbing="false" 
-        type="application/x-shockwave-flash" 
-        allowFullScreen="true" 
-        swLiveConnect="true" 
-        allowScriptAccess="always" 
-        pluginspage="http://www.macromedia.com/shockwave/oldschool-i-know/download/index.cgi">
-    </embed>
-  </object>
-   <br> 
-   <img src="/images/share.png" width="60" height="18" class="shareButton" onclick="fbCallQuote()"/>`)
-                .fadeIn().delay(20000).fadeOut();
+            $('div#quoteFrame').html(View.commentary(urlForView))
         } else {
             milyoni.clip = object;
-            $('div#clipFrame').html(`<img src="${milyoni.clip.thumbnail_url}" width="158" height="85" class="clipImage" /> <img src="/images/share.png" width="60" height="18" class="shareButton" onclick="fbCallClip();" />`).fadeIn().delay(20000).fadeOut();
+            $('div#clipFrame').html(View.clip(milyoni.clip.thumbnail_url))
         }
     },
 
