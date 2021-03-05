@@ -60,7 +60,7 @@ QueueBar = {
             $('div#likeFrame').html(View.liker(object.picture_url, object.link))
         } else if (object.thumbnail_url == undefined) {
             milyoni.quote = object;
-            $('div#quoteFrame').html(View.aQuote(milyoni.quote.text))
+            $('div#quoteFrame').html(View.quote(milyoni.quote.text))
         } else if (object.is_commentary) {
             let urlForView = "http://c.brightcove.com/services/viewer/federated_f9?isVid=1&isUI=1&publisherID=11111&playerID=11111&domain=embed&videoId=" + milyoni.clip.video_id;
             milyoni.clip = object;
