@@ -1,6 +1,6 @@
 export const View = {
 
-    commentary: (viewUrl)=> {
+    commentary: (viewUrl) => {
         return `
   <object id="flashObj" width="250" height="200" classid="clsid:11111" codebase="http://download.me">
     <param name="movie" value="http://c.brightcove.com/services/viewer/federated_f9?isVid=1" />
@@ -29,21 +29,21 @@ export const View = {
     },
 
     icon: (key, kind, time) => {
-       return `<img onclick='milyoni.seek(${time});' 
+        return `<img onclick='milyoni.seek(${time});' 
                                         id='icon_${key}' 
                                         class='icon_bar ${kind}' 
-                                        src='/images/${kind}_icon.png' >`  
+                                        src='/images/${kind}_icon.png' >`
     },
 
-    liker: (urlForPix, link)=> {
+    liker: (urlForPix, link) => {
         return `<b>${object.name}</b><br/><img src="${urlForPix}"> <iframe src="https://www.facebook.com/plugins/like.php?href=${link}&amp;send=false&amp;layout=standard&amp;show_faces=false&amp;action=like&amp;colorscheme=light&amp;font&amp;height=45" scrolling="no" frameborder="0" style="border:none; overflow:hidden; height:35px;" allowTransparency="true"></iframe>`
     },
-    
-    aQuote: (text)=>{
-       return `"${text}" <img src="/images/share.png" width="60" height="18" class="shareButton" onclick="fbCallQuote();"/>`
+
+    quote: (text) => {
+        return `"${text}" <img src="/images/share.png" width="60" height="18" class="shareButton" onclick="fbCallQuote();"/>`
     },
-    
-    clip:(urlForThumbnail)=>{
+
+    clip: (urlForThumbnail) => {
         return `<img src="${urlForThumbnail}" width="158" height="85" class="clipImage" />
  <img src="/images/share.png" width="60" height="18" class="shareButton" onclick="fbCallClip();" />`
     }
