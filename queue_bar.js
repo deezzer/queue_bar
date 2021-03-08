@@ -1,6 +1,6 @@
 "use strict";
 
-import {View} from './view.js';
+import { View } from './view.js';
 
 const screenSize = 704;
 
@@ -35,7 +35,7 @@ QueueBar = {
                 queueBar.popupModal(response)
             })
             .catch(error => {
-                console.warn(err)
+                console.warn(error)
             });
     },
 
